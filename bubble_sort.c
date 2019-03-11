@@ -1,17 +1,20 @@
 #include <stddef.h>
 #include <stdio.h>
 
+#define DATA 12, 1, 7, 45, 25, 1, 23, 5, 9, 0
+
 void bubble_sort(int *, int);
 void selection_sort(int *, int);
 void swap(int *, int *);
 
 int main() {
-	int data[] = {12, 1, 7, 45, 25, 1, 23, 5, 9, 0};
+	int data[] = {DATA};
 
     selection_sort(data, sizeof(data) / sizeof(int));
+    bubble_sort(data, sizeof(data) / sizeof(int));
 
     for (size_t i = 0; i < sizeof(data) / sizeof(int); i++) {
-		printf("%d ", data[i]);
+		printf("result :%d ", data[i]);
 	}
 }
 
@@ -24,6 +27,12 @@ void bubble_sort(int *arr, int count) {
                 swapped = 0;
             }
 		}
+
+        printf("pass %zu :", outer);
+        for (size_t iterator = 0; iterator < count; iterator++)
+            printf("%d ", arr[iterator]);
+        puts("");
+
         if(swapped)
             break;
     }
@@ -37,6 +46,11 @@ void selection_sort(int *arr, int count){
                 min = inner;
         if (min != outer)
             swap(&arr[min], &arr[outer]);
+
+        printf("pass %zu :", outer);
+        for (size_t iterator = 0; iterator < count; iterator++)
+            printf("%d ", arr[iterator]);
+        puts("");
     }
 }
 
