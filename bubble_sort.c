@@ -5,16 +5,19 @@
 
 void bubble_sort(int *, int);
 void selection_sort(int *, int);
+void insertion_sort(int *, int);
 void swap(int *, int *);
 
 int main() {
 	int data[] = {DATA};
 
-    selection_sort(data, sizeof(data) / sizeof(int));
-    bubble_sort(data, sizeof(data) / sizeof(int));
+    //selection_sort(data, sizeof(data) / sizeof(int));
+    //bubble_sort(data, sizeof(data) / sizeof(int));
+    insertion_sort(data, sizeof(data) / sizeof(int));
 
+    printf("%s", "result :");
     for (size_t i = 0; i < sizeof(data) / sizeof(int); i++) {
-		printf("result :%d ", data[i]);
+		printf("%d ", data[i]);
 	}
 }
 
@@ -59,3 +62,16 @@ void swap(int *a, int *b){
     *a = *b;
     *b = c;
 }
+
+void insertion_sort(int *arr, int count){
+    for (size_t outer = 1; outer < count; outer ++){
+        for (size_t inner = outer; inner > 0 && arr[inner - 1] > arr[inner]; inner--)
+            swap(&arr[inner], &arr[inner - 1]);
+            
+        printf("pass %zu :", outer);
+        for (size_t iterator = 0; iterator < count; iterator++)
+            printf("%d ", arr[iterator]);
+        puts("");
+    }
+}
+
