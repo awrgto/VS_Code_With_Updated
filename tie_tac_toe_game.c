@@ -9,11 +9,11 @@ int next_win(char t[3][3], char mark);
 int main(){
     char table[3][3] = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
     int x, y, turn = 1;
-    printf("%s","Do you need to first? Yes(1),No(2)");
+    printf("%s","Do you require the first move? Yes(1).No(2). --> ");
     scanf("%d", &turn);
     fflush(stdin);
     while( 1){
-        printf("%s", turn % 2 ? "\nplease enter the position --> " : "computer's position -->");
+        printf("%s", turn % 2 ? "\nplease enter the position --> " : "computer's position --> ");
         if(turn % 2){ 
             scanf("%d%d", &x, &y);
             fflush(stdin);
