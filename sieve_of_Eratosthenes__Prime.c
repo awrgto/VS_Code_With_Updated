@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 int main(){
-    int prime[26] = {0}, input = 0, primeIndex = 0;
+    int prime[1500000] = {0}, input = 0, primeIndex = 0;
     printf("%s","enter the range -->");
     scanf("%d", &input);
 
@@ -16,8 +16,8 @@ int main(){
         if( mark == 0)
             prime[primeIndex ++] = index;
     }
-    printf("total : %d \n", primeIndex);
     for(int index = 0; index < primeIndex; index ++)
         printf("%3d\t%s", prime[index], index % 5 == 4 ? "\n" : "");
+    printf("total : %d \n", primeIndex);
     
 }
