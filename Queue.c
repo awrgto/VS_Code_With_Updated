@@ -1,12 +1,12 @@
 #include <stdio.h>
 
-int enQueue ( int), deQueue ( int *),  empty (), size ();
+int enQueue ( int), deQueue ( int *, int *),  empty (), size ();
 void printQueue ();
 
 int queue[5], front = 0, rear = 0;
 
 int main(){
-    int input = 0, a;
+    int input = 0, a, b;
     while( input != 5){
         printf("%s","\n1.EnQueue\n2.DeQueue\n3.PrintQueue\n4.Size\n5.End --> ");
         scanf("%d", &input);
@@ -20,16 +20,17 @@ int main(){
                 printf("%s\n", enQueue( a) ? "Succeed!" : "Full !!");
                 break;
             }case 2 :{
-                if ( deQueue( &a))
-                    printf("the element u'r delete is %d\n",a);
+                if ( deQueue( &a, &b))
+                    printf("the element u'r delete is %d ( index : %d )\n", a, b);
                 else 
                     puts("The queue is empty.");
                 break;
             }case 3 :{
+                printf("front : %d\nrear : %d\nprint:\n\t", front % 5, rear % 5);
                 printQueue();
                 break;
             }case 4 :{
-                printf("The queue's size is %d", size());
+                printf("The queue's size is %d\n", size());
                 break;
             }case 5 :{
                 puts("Bye!");
@@ -43,8 +44,9 @@ int enQueue (int a){
         return 1;
     }return 0;
 }
-int deQueue (int *a){
+int deQueue (int *a, int *b){
     if( !empty()){
+        *b = front % 5;
         *a = queue[(front ++) % 5];
         return 1;
     }return 0;
