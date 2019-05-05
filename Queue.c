@@ -8,7 +8,7 @@ int queue[5], front = 0, rear = 0;
 int main(){
     int input = 0, a;
     while( input != 5){
-        printf("%s","\n1.EnQueue\n2.DeQueue\n3.PrintQueue\n4.Empty?\n5.End\n6.Size --> ");
+        printf("%s","\n1.EnQueue\n2.DeQueue\n3.PrintQueue\n4.Size\n5.End --> ");
         scanf("%d", &input);
         switch( input){
             default :{
@@ -29,9 +29,6 @@ int main(){
                 printQueue();
                 break;
             }case 4 :{
-                printf("The queue is%s empty.", empty() ? "" : "n't");
-                break;
-            }case 6 :{
                 printf("The queue's size is %d", size());
                 break;
             }case 5 :{
