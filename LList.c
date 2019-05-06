@@ -114,7 +114,7 @@ void printList(){
 int deleteNode(int target){
     NodePtr current = first, goal = first, previous = NULL;
     
-	if(empty())
+	if(empty() || exist( target))
 		return 0;
 	if( first -> data == target)
 		first = first->next;
