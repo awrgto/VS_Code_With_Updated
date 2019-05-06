@@ -3,7 +3,7 @@
 
 typedef struct node {
     int data;
-    struct node *next = NULL;
+    struct node *next;
 } Node;
 
 typedef Node *NodePtr;
@@ -96,7 +96,7 @@ int exist( int target){
 			current=current->next;
         count ++;
 	}
-	return NULL;
+	return 0;
 }
 
 void printList(){
