@@ -88,7 +88,7 @@ int insert(NodePtr ptr){
 
 int exist( int target){
     NodePtr current = first;
-    int count = 0;
+    int count = 1;
 	while( current != NULL){
 		if( current -> data == target)
 			return count;
@@ -114,7 +114,7 @@ void printList(){
 int deleteNode(int target){
     NodePtr current = first, goal = first, previous = NULL;
     
-	if(empty() || exist( target))
+	if(empty() || !exist( target))
 		return 0;
 	if( first -> data == target)
 		first = first->next;
