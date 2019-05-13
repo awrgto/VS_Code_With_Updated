@@ -20,7 +20,7 @@ int main(){
         fflush( stdin);
         nodePtr ptr = malloc( sizeof( *ptr));
         printf("物品 %d 為 --> ", i);
-        getchar( ); //?
+        //getchar( ); //?
         fgets( ptr -> name, 19, stdin);
         printf("物品 %d 價錢 --> ", i);
         scanf("%d", &( ptr -> price));
