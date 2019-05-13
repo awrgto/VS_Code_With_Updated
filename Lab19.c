@@ -2,7 +2,7 @@
 #include<stdlib.h>
 
 typedef struct node {
-    char name[10];
+    char name[20];
     int price;
     int weight;
     struct node *next;
@@ -10,30 +10,28 @@ typedef struct node {
 
 typedef Node *nodePtr;
 
-nodePtr head = NULL, tail = NULL, current;
+nodePtr head = NULL, tail = NULL;
 
 int main(){
     int item, i = 0;
-    printf("%s","背包物品數量 --> ");
+    printf("%s", "背包物品數量 --> ");
     scanf("%d", &item);
     while(item -( i ++)){
-        fflush(stdin);
-        nodePtr ptr = malloc(sizeof(*ptr));
+        fflush( stdin);
+        nodePtr ptr = malloc( sizeof( *ptr));
         printf("物品 %d 為 --> ", i);
-        getchar(); //?
-        fgets( ptr -> name, 9, stdin);
+        getchar( ); //?
+        fgets( ptr -> name, 19, stdin);
         printf("物品 %d 價錢 --> ", i);
-        scanf("%d", &(ptr -> price));
+        scanf("%d", &( ptr -> price));
         printf("物品 %d 重量 --> ", i);
-        scanf("%d", &(ptr -> weight));
+        scanf("%d", &( ptr -> weight));
         ptr -> next = NULL;
-        if( i == 1)
-            head = ptr;
-        else
-            tail -> next = ptr;
+        if( i == 1) head = ptr;
+        else tail -> next = ptr;
         tail = ptr;
     }
-    current = head;
+    nodePtr current = head;
     if(head == NULL) puts("List is empty!");
 	else
 		while(current != NULL){
