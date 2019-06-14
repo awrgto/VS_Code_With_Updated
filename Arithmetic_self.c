@@ -1,75 +1,44 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-typedef struct doubleVariableStack{
+typedef struct doubleVariableStruct{
     char opr;
     double num;
-    struct doubleVariableStack *next; //debug
-    struct doubleVariableStack *pre;
+    struct doubleVariableStruct *next; 
+    struct doubleVariableStruct *pre;
 } dvs;
 
 typedef dvs *dvsPtr;
 
-struct dvsS{
+struct dvsHook{
     int count;
-    dvsPtr dvsMark;
-    dvsPtr dvsHead;  //debug
-} dvSpostF = { 0, NULL, NULL}, dvSwordP = { 0, NULL, NULL}, controller;
+    dvsPtr dvsTail;
+    dvsPtr dvsHead;
+} dvsH[3] = {{0, NULL, NULL}};
 
-double getAnswer(char *), eval();
 char *inputString(FILE *, size_t);
-const char Nothing = '0', postF = '1', wordP = '2', Number = '3', PMB = '4';
-int dvsIsEmpty(), dvsSize(), dvsPop(char *, int *), dvsPeek(char *, int *), wordProcess(char *), in2Postfix(), isWhat(char, char);
-const int True = 1, False = 0;
-void dvsController(char c), printdvs(), dvsPush(char, int);
-
-void inToPostfix(char* infix, char* postfix) { 
-    int i, j, top;
-    for(i = 0, j = 0, top = 0; infix[i] != '\0'; i++) switch(infix[i]) { 
-        case '(':              // 運算子堆疊 
-            stack[++top] = infix[i]; 
-            break; 
-        case '+': case '-': case '*': case '/': 
-            while(priority(stack[top]) >= priority(infix[i])) { 
-                postfix[j++] = stack[top--];
-            } 
-            stack[++top] = infix[i]; // 存入堆疊 
-            break; 
-        case ')': 
-            while(stack[top] != '(') { // 遇 ) 輸出至 ( 
-                postfix[j++] = stack[top--];
-            } 
-            top--;  // 不輸出 ( 
-            break; 
-        default:  // 運算元直接輸出 
-            postfix[j++] = infix[i];
-    }
-    while(top > 0) { 
-        postfix[j++] = stack[top--];
-    }
-} 
-
-int priority(char op) { 
-    switch(op) { 
-        case '+': case '-': return 1;
-        case '*': case '/': return 2;
-        default:            return 0;
-    } 
-} 
+const char Nothing = '0', Number = '3', PMB = '4';
+int dvsIsEmpty(int), dvsSize(int), dvsPop(char *, double *, int), dvsPeek(char *, double *, int), dvsDeQueue(char *, double *, int);
+int wordProcess(char *), in2Postfix(), isWhat(char, char), inToPostfix(int, int), oprPriority(char op);
+const int True = 1, False = 0, Stack = 0, QueuePostfix = 1, QueueInfix = 2;
+double eval(int), cal(char, double, double), getAnswer(char *);
+void printdvs(int), dvsPush(char, double, int);
 
 int main(){
     printf("%s", "put ur question there --> ");
     char *infix = inputString(stdin, 10);
-    printf("%c", wordProcess(infix) == 1 ? 'S' : 'F');
-    printdvs();
-    //printf("\nans : %.3lf", getAnswer(infix));
+    printf("\nans : %.3lf", getAnswer(infix));
 }
 
-/*double getAnswer(char * infix){
-    wordProcess(infix);
-    in2Postfix();
-    return eval();
-}*/
+double getAnswer(char * infix){
+    size_t check = 2;
+    check -= wordProcess(infix);
+    //printdvs(QueueInfix); //debug 這將顯示文字分析做了什麼
+    check -= inToPostfix(QueueInfix, QueuePostfix);
+    //printdvs(QueuePostfix); //debug 這將顯示轉後序程式做了什麼
+    if (check) puts("ur input maybe have something wrong!");
+    return eval(QueuePostfix);
+}
 
 char *inputString(FILE* fp, size_t size){//The size is extended by the input with the value of the provisional
     char *str;
@@ -85,96 +54,108 @@ char *inputString(FILE* fp, size_t size){//The size is extended by the input wit
         }
     }
     str[len++] = '\0';
-
     return realloc(str, sizeof(char) * len);
 }
-
-
-int dvsIsEmpty() { return controller.count ? 0 : 1;}
-int dvsSize() { return controller.count; }
-void dvsController( char c) { controller = c == postF ? dvSpostF : dvSwordP; }
-void printdvs() { //debug
-    dvsPtr current = controller.dvsHead;
-    if( dvsIsEmpty()) puts("List is empty!");
+int dvsIsEmpty(int controller) { return dvsH[controller].count ? 0 : 1;}
+int dvsSize(int controller) { return dvsH[controller].count; }
+void printdvs(int controller) { //debug
+    dvsPtr current = dvsH[controller].dvsHead;
+    if( dvsIsEmpty(controller)) puts("List is empty!");
 	else
 		while(current != NULL){
             if( current ->opr != Nothing) printf("\t%c", current ->opr);
             else printf("\t%.3lf", current ->num);
 			current = current -> next;
 		}
+    puts("\nprint end");
 }
-void dvsPush( char c_in, int i_in) {
+void dvsPush( char c_in, double d_in, int controller) {
     dvsPtr ptr = malloc(sizeof(*ptr));
-    ptr->num = i_in;
+    ptr->num = d_in;
     ptr->opr = c_in;
     
-    if( dvsIsEmpty()){
-        controller.dvsHead = ptr; //debug
+    if( dvsIsEmpty(controller)){
+        dvsH[controller].dvsHead = ptr; //debug
         ptr->pre = NULL;
     }else{
-        controller.dvsMark -> next = ptr; //debug
-        ptr->pre = controller.dvsMark;
+        dvsH[controller].dvsTail -> next = ptr; //debug
+        ptr->pre = dvsH[controller].dvsTail;
     }
-    controller.dvsMark = ptr;
+    dvsH[controller].dvsTail = ptr;
     ptr -> next = NULL; //debug
-    controller.count++;
+    dvsH[controller].count++;
 }
-int dvsPop( char * c_out, int * i_out) {
-    dvsPtr beban = controller.dvsMark;
-    if( dvsIsEmpty()) return 0;
+int dvsPop( char * c_out, double * d_out, int controller) {
+    dvsPtr beban = dvsH[controller].dvsTail;
+    if( dvsIsEmpty(controller)) return 0;
 
-    controller.dvsMark = controller.dvsMark->pre;
-    *i_out = beban->num;
+    dvsH[controller].dvsTail = dvsH[controller].dvsTail->pre;
+    *d_out = beban->num;
     *c_out = beban->opr;
 
     free( beban);
-    controller.count --;
+    dvsH[controller].count --;
 
-    if( dvsIsEmpty()) controller.dvsHead = NULL; //debug
+    if( dvsIsEmpty(controller)) dvsH[controller].dvsHead = NULL; //debug
+    else dvsH[controller].dvsTail->next = NULL;
     return 1;
 }
-int dvsPeek( char * c_out, int * i_out){
-    if (dvsIsEmpty()) return 0;
-    *i_out = controller.dvsMark->num;
-    *c_out = controller.dvsMark->opr;
+int dvsPeek( char * c_out, double * d_out, int controller){
+    if (dvsIsEmpty(controller)) return 0;
+    *d_out = dvsH[controller].dvsTail->num;
+    *c_out = dvsH[controller].dvsTail->opr;
     return 1;
 }
+int dvsDeQueue( char * c_out, double * d_out, int controller){
+    dvsPtr beban = dvsH[controller].dvsHead;
+    if( dvsIsEmpty(controller)) return 0;
 
+    dvsH[controller].dvsHead = dvsH[controller].dvsHead->next;
+    *d_out = beban->num;
+    *c_out = beban->opr;
+
+    free( beban);
+    dvsH[controller].count --;
+
+    if( dvsIsEmpty(controller)) dvsH[controller].dvsTail = NULL; //debug
+    else dvsH[controller].dvsHead->pre = NULL;
+    return 1;
+}
 int wordProcess(char * infix){
     size_t tok = 0, isHead = True;
-    int tmp = 0, i_last = 0, sign = 0;
+    int tmp = 0,sign = 0;
+    double d_last;
     char sTmp[2] = {'\0'}, c_last = 'N';
-    dvsController(wordP);
     //printf("%s", infix);//debug
     while(infix[tok] != '\0') {
-        isHead = 1 - dvsPeek(&c_last, &i_last);
+        isHead = 1 - dvsPeek(&c_last, &d_last, QueueInfix);
         switch( infix[tok]) {
             case '+': case '-': 
-                if( isHead || (!isWhat(c_last, Number))){
+                if( isHead || ((!isWhat(c_last, Number)) && c_last != ')')){
                     sign = (sign == 0) ? 1 : sign;
                     sign *= (infix[tok++] == '+') ? 1 : -1;
                 }else{
-                    dvsPush(infix[tok++], 0);
+                    dvsPush(infix[tok++], 0, QueueInfix);
                 }
                 break;
             case '*': case '/': 
-                if(((!isWhat(c_last, PMB)) && (!isWhat(c_last, Number)))  || isHead)
+                if(((!isWhat(c_last, Number)) && c_last != ')')  || isHead)
                     return False;
-                dvsPush(infix[tok++], 0);
+                dvsPush(infix[tok++], 0, QueueInfix);
                 isHead = False;
                 break;
             case '(': 
                 if( sign != 0){
-                    dvsPush(Nothing, sign);
-                    dvsPush('*', 0);
+                    dvsPush(Nothing, sign, QueueInfix);
+                    dvsPush('*', 0, QueueInfix);
                     sign = 0;
                 }
-                dvsPush(infix[tok++], 0);
+                dvsPush(infix[tok++], 0, QueueInfix);
                 break;
             case ')':
                 if(!isWhat(c_last, Number) && c_last != ')')
                     return False;
-                dvsPush(infix[tok++], 0);
+                dvsPush(infix[tok++], 0, QueueInfix);
                 isHead = False;
                 break;
             case '1':case '2':case '3':case '4':case '5':
@@ -183,8 +164,8 @@ int wordProcess(char * infix){
                     sTmp[0] = infix[tok];
                     tmp = tmp * 10 + atoi(sTmp);
                 } while (isWhat(infix[++tok], Number) == True);
-                dvsPush(Nothing, sign == 0 ? tmp : sign * tmp);
-                if(infix[tok] == '(') dvsPush('*', 0);
+                dvsPush(Nothing, sign == 0 ? tmp : sign * tmp, QueueInfix);
+                if(infix[tok] == '(') dvsPush('*', 0, QueueInfix);
                 tmp = 0;
                 sign = 0;
                 break;
@@ -207,4 +188,74 @@ int isWhat(char c, char mode){
             return False;
     }
     return False;
+}
+int inToPostfix(int infix, int postfix) {
+    char c_infix, c_last, c_pop;
+    double d_infix, d_last, i_pop;
+    while (dvsDeQueue(&c_infix, &d_infix, infix)) {
+        switch (c_infix) {
+            case '(':              // 運算子堆疊
+                dvsPush(c_infix, d_infix, Stack);
+                break; 
+            case '+': case '-': case '*': case '/':
+                while(!dvsIsEmpty(Stack)) {
+                    dvsPeek(&c_last, &d_last, Stack);
+                    if(oprPriority(c_last) < oprPriority(c_infix)) break;
+                    dvsPop(&c_pop, &i_pop, Stack);
+                    dvsPush(c_pop, i_pop, postfix);
+                }
+                dvsPush(c_infix, d_infix, Stack); // 存入堆疊
+                break; 
+            case ')': 
+                while(!dvsIsEmpty(Stack)) { // 遇 ) 輸出至 (
+                    dvsPeek(&c_last, &d_last, Stack);
+                    if(c_last == '(') break;
+                    dvsPop(&c_pop, &i_pop, Stack);
+                    dvsPush(c_pop, i_pop, postfix);
+                } 
+                dvsPop(&c_pop, &i_pop, Stack);  // 不輸出 ( 
+                break; 
+            default:  // 運算元直接輸出
+                dvsPush(c_infix, d_infix, postfix);
+        }
+    }
+    while(!dvsIsEmpty(Stack)) {
+        dvsPop(&c_pop, &i_pop, Stack);
+        if(c_pop == '(') return 0;
+        dvsPush(c_pop, i_pop, postfix);
+    }
+    return 1;
+} 
+int oprPriority(char op) { 
+    switch(op) { 
+        case '+': case '-': return 1;
+        case '*': case '/': return 2;
+        default:            return 0;
+    } 
+} 
+double eval(int postfix) {  
+    char c_infix, c_pop1, c_pop2;
+    double d_infix, i_pop1, i_pop2;
+    while (dvsDeQueue(&c_infix, &d_infix, postfix)) {
+        switch (c_infix) {
+            case '+': case '-': case '*': case '/':
+                dvsPop(&c_pop1, &i_pop1, Stack);
+                dvsPop(&c_pop2, &i_pop2, Stack);
+                dvsPush(Nothing, cal(c_infix, i_pop2, i_pop1), Stack);
+                break; 
+            default: 
+                dvsPush(Nothing, d_infix, Stack);
+        }
+    }          
+    dvsPop(&c_pop1, &i_pop1, Stack); 
+    return i_pop1;
+}
+double cal(char opr, double pop2, double pop1) { 
+    switch(opr) { 
+        case '+': return pop2 + pop1; 
+        case '-': return pop2 - pop1; 
+        case '*': return pop2 * pop1; 
+        case '/': return pop2 / pop1; 
+    }
+    return 0.0f;
 }
