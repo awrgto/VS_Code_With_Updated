@@ -23,70 +23,44 @@ int dvsIsEmpty(), dvsSize(), dvsPop(char *, int *), dvsPeek(char *, int *), word
 const int True = 1, False = 0;
 void dvsController(char c), printdvs(), dvsPush(char, int);
 
-int wordProcess(char * infix){
-    size_t tok = 0, isHead = True, sign = 0;
-    int tmp = 0, i_last = 0;
-    char sTmp[2] = {'\0'}, c_last = 'N';
-    dvsController(wordP);
-    printf("%s", infix);
-    while(infix[tok] != '\0') {
-        isHead = 1 - dvsPeek(&c_last, &i_last);
-        switch( infix[tok]) {
-            case '+': case '-': {
-                if( isHead || !isWhat(c_last, Number)){
-                    sign = sign == 0 ? 1 : sign;
-                    sign *= infix[tok++] == '+' ? 1 : -1;
-                }else{
-                    dvsPush(infix[tok++], 0);
-                }
-                break;
-            }
-            case '*': case '/': 
-            case '(': case ')':{
-                if((!isWhat(infix[tok + 1], Number) && !isWhat(infix[tok + 1], PMB)) || isHead)
-                    return False;
-                dvsPush(infix[tok++], 0);
-                isHead = False;
-                break;
-            }
-            case '1':case '2':case '3':case '4':case '5':
-            case '6':case '7':case '8':case '9':case '0':{
-                while( ! isWhat( infix[++tok], Number)){
-                    sTmp[0] = infix[tok];
-                    tmp = tmp * 10 + atoi(sTmp);
-                }
-                dvsPush(Nothing, sign == 0 ? tmp : sign * tmp);
-                sign = 0;
-                break;
-            }
-        }
-        printdvs();
+void inToPostfix(char* infix, char* postfix) { 
+    int i, j, top;
+    for(i = 0, j = 0, top = 0; infix[i] != '\0'; i++) switch(infix[i]) { 
+        case '(':              // 運算子堆疊 
+            stack[++top] = infix[i]; 
+            break; 
+        case '+': case '-': case '*': case '/': 
+            while(priority(stack[top]) >= priority(infix[i])) { 
+                postfix[j++] = stack[top--];
+            } 
+            stack[++top] = infix[i]; // 存入堆疊 
+            break; 
+        case ')': 
+            while(stack[top] != '(') { // 遇 ) 輸出至 ( 
+                postfix[j++] = stack[top--];
+            } 
+            top--;  // 不輸出 ( 
+            break; 
+        default:  // 運算元直接輸出 
+            postfix[j++] = infix[i];
     }
-    return 1;
-}
-int isWhat(char c, char mode){
-    char number[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, pmb[] = {'+', '-', '('};
-    size_t iter = 0;
-    switch(mode){
-        case Number :
-            while( (iter ++) >= sizeof(number))
-                if( c == number[iter]) return True;
-            return False;
-        case PMB:
-            while((iter++) >= sizeof(pmb))
-                if( c == pmb[iter]) return True;
-            return False;
+    while(top > 0) { 
+        postfix[j++] = stack[top--];
     }
-    return False;
-}
+} 
+
+int priority(char op) { 
+    switch(op) { 
+        case '+': case '-': return 1;
+        case '*': case '/': return 2;
+        default:            return 0;
+    } 
+} 
 
 int main(){
     printf("%s", "put ur question there --> ");
     char *infix = inputString(stdin, 10);
-    wordProcess(infix);
-    //dvsPush(Nothing,25);
-    //dvsPush('+',0);
-    //dvsPush(Nothing,2);
+    printf("%c", wordProcess(infix) == 1 ? 'S' : 'F');
     printdvs();
     //printf("\nans : %.3lf", getAnswer(infix));
 }
@@ -164,4 +138,73 @@ int dvsPeek( char * c_out, int * i_out){
     *i_out = controller.dvsMark->num;
     *c_out = controller.dvsMark->opr;
     return 1;
+}
+
+int wordProcess(char * infix){
+    size_t tok = 0, isHead = True;
+    int tmp = 0, i_last = 0, sign = 0;
+    char sTmp[2] = {'\0'}, c_last = 'N';
+    dvsController(wordP);
+    //printf("%s", infix);//debug
+    while(infix[tok] != '\0') {
+        isHead = 1 - dvsPeek(&c_last, &i_last);
+        switch( infix[tok]) {
+            case '+': case '-': 
+                if( isHead || (!isWhat(c_last, Number))){
+                    sign = (sign == 0) ? 1 : sign;
+                    sign *= (infix[tok++] == '+') ? 1 : -1;
+                }else{
+                    dvsPush(infix[tok++], 0);
+                }
+                break;
+            case '*': case '/': 
+                if(((!isWhat(c_last, PMB)) && (!isWhat(c_last, Number)))  || isHead)
+                    return False;
+                dvsPush(infix[tok++], 0);
+                isHead = False;
+                break;
+            case '(': 
+                if( sign != 0){
+                    dvsPush(Nothing, sign);
+                    dvsPush('*', 0);
+                    sign = 0;
+                }
+                dvsPush(infix[tok++], 0);
+                break;
+            case ')':
+                if(!isWhat(c_last, Number) && c_last != ')')
+                    return False;
+                dvsPush(infix[tok++], 0);
+                isHead = False;
+                break;
+            case '1':case '2':case '3':case '4':case '5':
+            case '6':case '7':case '8':case '9':case '0':
+                do{
+                    sTmp[0] = infix[tok];
+                    tmp = tmp * 10 + atoi(sTmp);
+                } while (isWhat(infix[++tok], Number) == True);
+                dvsPush(Nothing, sign == 0 ? tmp : sign * tmp);
+                if(infix[tok] == '(') dvsPush('*', 0);
+                tmp = 0;
+                sign = 0;
+                break;
+            default : tok++;
+        }
+    }
+    return 1;
+}
+int isWhat(char c, char mode){
+    char number[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, pmb[] = {'+', '-', '('};
+    size_t iter = 0;
+    switch(mode){
+        case Number :
+            while( iter < sizeof(number))
+                if( c == number[iter++]) return True;
+            return False;
+        case PMB:
+            while(iter < sizeof(pmb))
+                if( c == pmb[iter++]) return True;
+            return False;
+    }
+    return False;
 }
