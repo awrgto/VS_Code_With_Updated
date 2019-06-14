@@ -31,5 +31,6 @@
     "files.associations": {
         "time.h": "c",
         "stdlib.h": "c"
-    } // 效果效果比cpptools要好
+    }, // 效果效果比cpptools要好
+    "terminal.integrated.shell.windows": "C:\\Windows\\System32\\cmd.exe"
 }
