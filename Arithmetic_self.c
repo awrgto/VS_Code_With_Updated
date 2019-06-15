@@ -87,7 +87,7 @@ void dvsPush( char c_in, double d_in, int controller) {
 }
 int dvsPop( char * c_out, double * d_out, int controller) {
     dvsPtr beban = dvsH[controller].dvsTail;
-    if( dvsIsEmpty(controller)) return 0;
+    if( dvsIsEmpty(controller)) return Flase;
 
     dvsH[controller].dvsTail = dvsH[controller].dvsTail->pre;
     *d_out = beban->num;
@@ -98,17 +98,17 @@ int dvsPop( char * c_out, double * d_out, int controller) {
 
     if( dvsIsEmpty(controller)) dvsH[controller].dvsHead = NULL; //debug
     else dvsH[controller].dvsTail->next = NULL;
-    return 1;
+    return True;
 }
 int dvsPeek( char * c_out, double * d_out, int controller){
-    if (dvsIsEmpty(controller)) return 0;
+    if (dvsIsEmpty(controller)) return Flase;
     *d_out = dvsH[controller].dvsTail->num;
     *c_out = dvsH[controller].dvsTail->opr;
-    return 1;
+    return True;
 }
 int dvsDeQueue( char * c_out, double * d_out, int controller){
     dvsPtr beban = dvsH[controller].dvsHead;
-    if( dvsIsEmpty(controller)) return 0;
+    if( dvsIsEmpty(controller)) return Flase;
 
     dvsH[controller].dvsHead = dvsH[controller].dvsHead->next;
     *d_out = beban->num;
@@ -119,7 +119,7 @@ int dvsDeQueue( char * c_out, double * d_out, int controller){
 
     if( dvsIsEmpty(controller)) dvsH[controller].dvsTail = NULL; //debug
     else dvsH[controller].dvsHead->pre = NULL;
-    return 1;
+    return True;
 }
 int wordProcess(char * infix){
     size_t tok = 0, isHead = True;
@@ -172,7 +172,7 @@ int wordProcess(char * infix){
             default : tok++;
         }
     }
-    return 1;
+    return True;
 }
 int isWhat(char c, char mode){
     char number[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, pmb[] = {'+', '-', '('};
@@ -221,10 +221,10 @@ int inToPostfix(int infix, int postfix) {
     }
     while(!dvsIsEmpty(Stack)) {
         dvsPop(&c_pop, &i_pop, Stack);
-        if(c_pop == '(') return 0;
+        if(c_pop == '(') return Flase;
         dvsPush(c_pop, i_pop, postfix);
     }
-    return 1;
+    return True;
 } 
 int oprPriority(char op) { 
     switch(op) { 
@@ -257,5 +257,5 @@ double cal(char opr, double pop2, double pop1) {
         case '*': return pop2 * pop1; 
         case '/': return pop2 / pop1; 
     }
-    return 0.0f;
+    return False;
 }
