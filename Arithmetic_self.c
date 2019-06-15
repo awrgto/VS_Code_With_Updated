@@ -19,7 +19,7 @@ struct dvsHook{
 char *inputString(FILE *, size_t);
 const char Nothing = '0', Number = '3', PMB = '4';
 int dvsIsEmpty(int), dvsSize(int), dvsPop(char *, double *, int), dvsPeek(char *, double *, int), dvsDeQueue(char *, double *, int);
-int wordProcess(char *), in2Postfix(), isWhat(char, char), inToPostfix(int, int), oprPriority(char op);
+int wordProcess(char *), isWhat(char, char), inToPostfix(int, int), oprPriority(char);
 const int True = 1, False = 0, Stack = 0, QueuePostfix = 1, QueueInfix = 2;
 double eval(int), cal(char, double, double), getAnswer(char *);
 void printdvs(int), dvsPush(char, double, int);
@@ -63,8 +63,8 @@ void printdvs(int controller) { //debug
     if( dvsIsEmpty(controller)) puts("List is empty!");
 	else
 		while(current != NULL){
-            if( current ->opr != Nothing) printf("\t%c", current ->opr);
-            else printf("\t%.3lf", current ->num);
+            if( current ->opr != Nothing) printf(" %c", current ->opr);
+            else printf(" %.3lf", current ->num);
 			current = current -> next;
 		}
     puts("\nprint end");
