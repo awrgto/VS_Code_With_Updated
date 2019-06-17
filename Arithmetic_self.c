@@ -1,20 +1,20 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-typedef struct doubleVariableStruct{
-    char opr;
-    double num;
-    struct doubleVariableStruct *next; 
-    struct doubleVariableStruct *pre;
+typedef struct doubleVariableStruct{//資料結構(來儲存LLQueue跟LLStack)
+    char opr;                       //儲存運算子
+    double num;                     //儲存運算元
+    struct doubleVariableStruct *next;  //通向下一個鏈結
+    struct doubleVariableStruct *pre;   //通向上一個鏈結
 } dvs;
 
-typedef dvs *dvsPtr;
+typedef dvs *dvsPtr;    //讓dvs更好被調用
 
-struct dvsHook{
-    int count;
-    dvsPtr dvsTail;
-    dvsPtr dvsHead;
-} dvsH[3] = {{0, NULL, NULL}};
+struct dvsHook{         //dvs紀錄器，以記錄多個鏈結串列(堆疊或佇列)
+    int count;          //紀錄此dvs中有幾個資料
+    dvsPtr dvsTail;     //紀錄此dvs的尾巴
+    dvsPtr dvsHead;     //紀錄此dvs的開頭
+} dvsH[3] = {{0, NULL, NULL}};  //定義+宣告3個dvs型態的資料結構
 
 char *inputString(FILE *, size_t);
 const char Nothing = '0', Number = '3', PMB = '4';
@@ -24,10 +24,15 @@ const int True = 1, False = 0, Stack = 0, QueuePostfix = 1, QueueInfix = 2;
 double eval(int), cal(char, double, double), getAnswer(char *);
 void printdvs(int), dvsPush(char, double, int);
 
-int main(){
-    printf("%s", "put ur question there --> ");
-    char *infix = inputString(stdin, 10);
-    printf("\nans : %.3lf", getAnswer(infix));
+int main(){ //主程式(不會這都不懂吧)
+    size_t pass = True;
+    while( pass) {
+        printf("%s", "put ur question there --> ");
+        char *infix = inputString(stdin, 10);
+        printf("\nans : %.3lf\n離開請輸入0，其他輸入視為繼續", getAnswer(infix));
+        scanf("%zu", &pass);
+        fflush(stdin);
+    }
 }
 
 double getAnswer(char * infix){
@@ -87,7 +92,7 @@ void dvsPush( char c_in, double d_in, int controller) {
 }
 int dvsPop( char * c_out, double * d_out, int controller) {
     dvsPtr beban = dvsH[controller].dvsTail;
-    if( dvsIsEmpty(controller)) return Flase;
+    if( dvsIsEmpty(controller)) return False;
 
     dvsH[controller].dvsTail = dvsH[controller].dvsTail->pre;
     *d_out = beban->num;
@@ -101,14 +106,14 @@ int dvsPop( char * c_out, double * d_out, int controller) {
     return True;
 }
 int dvsPeek( char * c_out, double * d_out, int controller){
-    if (dvsIsEmpty(controller)) return Flase;
+    if (dvsIsEmpty(controller)) return False;
     *d_out = dvsH[controller].dvsTail->num;
     *c_out = dvsH[controller].dvsTail->opr;
     return True;
 }
 int dvsDeQueue( char * c_out, double * d_out, int controller){
     dvsPtr beban = dvsH[controller].dvsHead;
-    if( dvsIsEmpty(controller)) return Flase;
+    if( dvsIsEmpty(controller)) return False;
 
     dvsH[controller].dvsHead = dvsH[controller].dvsHead->next;
     *d_out = beban->num;
@@ -221,7 +226,7 @@ int inToPostfix(int infix, int postfix) {
     }
     while(!dvsIsEmpty(Stack)) {
         dvsPop(&c_pop, &i_pop, Stack);
-        if(c_pop == '(') return Flase;
+        if(c_pop == '(') return False;
         dvsPush(c_pop, i_pop, postfix);
     }
     return True;
