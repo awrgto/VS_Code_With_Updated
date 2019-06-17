@@ -6,7 +6,7 @@
 #define DATA 25
 
 int main(){
-    size_t iter = 0, great[DATA] = {0}, normal[DATA] = {0}, bad[DATA] = {0}, maxMark = -1, minMark = -1;
+    size_t iter = 0, great[DATA] = {0}, normal[DATA] = {0}, bad[DATA] = {0}, maxMark = -1, minMark = -1, o_iter = 0, o_mark;
     size_t *sPtr[6] = {bad, bad, bad, normal, great, great};
     int i_list[DATA] = {0};
     char c_list[DATA][NAME] = {""}, txt[3][14] = {"\n<60 : ", "\n60<= , <80 :", "\n80<= :"};
@@ -26,7 +26,7 @@ int main(){
         av += i_list[iter];
         fprintf(fwPtr, "%s %d\n", c_list[iter], i_list[iter]);
     }
-    for (size_t o_iter = 0, o_mark = 0; o_iter < 3; o_iter++, o_mark = 0)
+    for ( o_iter = 0, o_mark = 0; o_iter < 3; o_iter++, o_mark = 0)
         for (iter = 0; iter < DATA; iter++){
             if( sPtr[o_iter + 2][iter])printf("%s\n\t%s %d", !o_mark++ ? txt[o_iter] : "", c_list[iter], i_list[iter]); //printf("o_iter :%zu", o_iter);//debug
             stdev += pow((float)i_list[iter] - av / DATA, 2);
