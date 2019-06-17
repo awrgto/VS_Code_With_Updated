@@ -13,6 +13,11 @@ int main(){
     float av = 0, stdev = 0;
     FILE *frPtr = fopen("D:\\VirtualStudio_Code_Programming\\VS_Code_With_Updated\\Sample.txt", "r"), *fwPtr = fopen("D:\\VirtualStudio_Code_Programming\\VS_Code_With_Updated\\學號.txt", "a");
 
+    if ( !frPtr ) {
+        puts("can't open file");
+        return -32;
+    }
+
     for (; !feof(frPtr); iter++) {
         fscanf(frPtr, "%s%d", c_list[iter], &i_list[iter]); //printf("%s%d", c_list[iter], i_list[iter]);//debug
         sPtr[i_list[iter] / 20][iter]++; //printf("\t%d\n", i_list[iter] / 20);//debug
