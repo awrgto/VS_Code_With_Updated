@@ -29,9 +29,9 @@ int main(){ //主程式(不會這都不懂吧)
     while( pass) {
         printf("%s", "put ur question there --> ");
         char *infix = inputString(stdin, 10);
-        printf("\nans : %.3lf\n離開請輸入0，其他輸入視為繼續", getAnswer(infix));
+        printf("\nans : %.3lf\n離開請輸入0，其他輸入視為繼續 -->", getAnswer(infix));
         scanf("%zu", &pass);
-        fflush(stdin);
+        fflush(stdin);  //清空stdin的緩存區
     }
 }
 
