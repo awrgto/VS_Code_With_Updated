@@ -27,7 +27,7 @@ void printdvs(int), dvsPush(char, double, int),dvsClean(int);
 int main(){ //主程式(不會這都不懂吧)
     size_t pass = True;
     while( pass) {
-        printf("%s", "except +-*/() other symbol will be ignored\nput ur question there --> ");
+        printf("%s", "except +-*/() other symbol will be ignored\nput ur question there (only integer)--> ");
         char *infix = inputString(stdin, 10);
         printf("\nans : %.3lf\n離開請輸入0，其他輸入視為繼續 -->", getAnswer(infix));
         scanf("%zu", &pass);
