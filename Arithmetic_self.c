@@ -22,12 +22,12 @@ int dvsIsEmpty(int), dvsSize(int), dvsPop(char *, double *, int), dvsPeek(char *
 int wordProcess(char *), isWhat(char, char), inToPostfix(int, int), oprPriority(char);
 const int True = 1, False = 0, Stack = 0, QueuePostfix = 1, QueueInfix = 2;
 double eval(int), cal(char, double, double), getAnswer(char *);
-void printdvs(int), dvsPush(char, double, int);
+void printdvs(int), dvsPush(char, double, int),dvsClean(int);
 
 int main(){ //主程式(不會這都不懂吧)
     size_t pass = True;
     while( pass) {
-        printf("%s", "put ur question there --> ");
+        printf("%s", "except +-*/() other symbol will be ignored\nput ur question there --> ");
         char *infix = inputString(stdin, 10);
         printf("\nans : %.3lf\n離開請輸入0，其他輸入視為繼續 -->", getAnswer(infix));
         scanf("%zu", &pass);
@@ -37,12 +37,16 @@ int main(){ //主程式(不會這都不懂吧)
 
 double getAnswer(char * infix){
     size_t check = 2;
+    double ans;
     check -= wordProcess(infix);
     //printdvs(QueueInfix); //debug 這將顯示文字分析做了什麼
     check -= inToPostfix(QueueInfix, QueuePostfix);
     //printdvs(QueuePostfix); //debug 這將顯示轉後序程式做了什麼
     if (check) puts("ur input maybe have something wrong!");
-    return eval(QueuePostfix);
+    ans = eval(QueuePostfix);
+    for (size_t iter = 0; iter < 3; iter++)
+        dvsClean(iter);
+    return ans;
 }
 
 char *inputString(FILE* fp, size_t size){//The size is extended by the input with the value of the provisional
@@ -126,6 +130,16 @@ int dvsDeQueue( char * c_out, double * d_out, int controller){
     else dvsH[controller].dvsHead->pre = NULL;
     return True;
 }
+void dvsClean(int controller){
+    dvsPtr beban = dvsH[controller].dvsTail;
+    while( beban){
+        dvsH[controller].dvsTail = dvsH[controller].dvsTail->pre;
+        free( beban);
+        beban = dvsH[controller].dvsTail;
+    }
+    dvsH[controller].count = 0;
+    dvsH[controller].dvsTail = NULL;
+}
 int wordProcess(char * infix){
     size_t tok = 0, isHead = True;
     int tmp = 0,sign = 0;
@@ -167,8 +181,9 @@ int wordProcess(char * infix){
             case '6':case '7':case '8':case '9':case '0':
                 do{
                     sTmp[0] = infix[tok];
-                    tmp = tmp * 10 + atoi(sTmp);
-                } while (isWhat(infix[++tok], Number) == True);
+                    if(isWhat(infix[tok], Number))
+                        tmp = tmp * 10 + atoi(sTmp);
+                } while (isWhat(infix[++tok], PMB) == False && infix[tok] != '\0');
                 dvsPush(Nothing, sign == 0 ? tmp : sign * tmp, QueueInfix);
                 if(infix[tok] == '(') dvsPush('*', 0, QueueInfix);
                 tmp = 0;
@@ -180,7 +195,7 @@ int wordProcess(char * infix){
     return True;
 }
 int isWhat(char c, char mode){
-    char number[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, pmb[] = {'+', '-', '('};
+    char number[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, pmb[] = {'+', '-', '*', '/', '(', ')'};
     size_t iter = 0;
     switch(mode){
         case Number :
