@@ -25,14 +25,15 @@ const int Stack = 0, Queue4pos = 1, Queue4in = 2;
 
 char *getString ( FILE *, size_t );         //get un_limit string
 
-int isEmpty ( int );                        //linkedList Array Method
-int size ( int );
-void push ( char, double, int );
-int pop ( char *, double *, int );
-int shift ( char *, double *, int );
-int peek ( char *, double *, int );
-void print ( int );
-void clean ( int );
+//linkedList Array Method
+int isEmpty ( int );                        //check LLA is empty or not
+int size ( int );                           //get size of LLA
+void push ( char, double, int );            //insert a element at rear
+int pop ( char *, double *, int );          //delete a element at rear
+int shift ( char *, double *, int );        //delete a element at front
+int peek ( char *, double *, int );         //show last element
+void print ( int );     //debug             //print LLA
+void clean ( int );                         //make LLA empty
 
 int isAllowedOpr ( char );                  //ident is it char that i allowed
 
@@ -40,6 +41,7 @@ int priority ( char );                      //sort opr by priority
 
 double calculate ( char, double, double );  //calculate the number be inputed with opr
 
+//in total Process
 int wordProcess ( char * );                 //deal with string to linked list type
 int inToPostfix ( int, int );               //deal with infixExpression to postfixExpression
 double eval ( int );                        //calculate postfixExpression
