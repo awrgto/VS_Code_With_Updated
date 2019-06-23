@@ -48,7 +48,7 @@ void getAnswer ( char * );                  //for total Process
 
 int main ( ) {
     char pass = 'n' ;
-    while ( pass == 'n' ) {
+    while ( tolower( pass ) == 'n' ) {
         printf ( "%s", "\nExcept +-*/ ( ) other symbol will be ignored\nput ur question there ( only integer & every item < 2^(31-1) --> " );
         char *infix = getString ( stdin, 8 );
         getAnswer( infix );
@@ -69,7 +69,7 @@ void getAnswer ( char * infix ) {
     //print ( Queue4pos );
     if ( check ) puts ( "\nur input maybe have something wrong!" );
     else printf ( "\nans : %.3lf\n", eval ( Queue4pos ) );
-    for ( size_t iter = 0; iter < 3; iter++ )
+    for ( size_t iter = 0; iter < 3; iter++ )   //clean all data if their are not be used
         clean ( iter );
 }
 
@@ -87,7 +87,7 @@ char *getString ( FILE* fp, size_t size ) {
         }
     }
     str[len++] = '\0';
-    return realloc ( str, sizeof ( char ) * len );
+    return realloc ( str, sizeof ( char ) * len );  //re-sized string
 }
 int isEmpty ( int controller ) { return LLAH[controller].count ? 0 : 1;}
 int size ( int controller ) { return LLAH[controller].count; }
