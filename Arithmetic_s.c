@@ -38,13 +38,13 @@ int isAllowedOpr ( char );                  //ident is it char that i allowed
 
 int priority ( char );                      //sort opr by priority
 
-double calculate ( char, double, double );  //cal the number be inputed with opr
+double calculate ( char, double, double );  //calculate the number be inputed with opr
 
 int wordProcess ( char * );                 //deal with string to linked list type
 int inToPostfix ( int, int );               //deal with infixExpression to postfixExpression
-double eval ( int );
+double eval ( int );                        //calculate postfixExpression
 
-void getAnswer ( char * );
+void getAnswer ( char * );                  //for total Process
 
 int main ( ) {
     char pass = 'n' ;
