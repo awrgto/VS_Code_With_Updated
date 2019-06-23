@@ -2,20 +2,20 @@
 #include<stdlib.h>
 #include<ctype.h>
 
-typedef struct MultipleVariableFabric {
+typedef struct linkedListArray {     //linkedList Array
     char opr;
     double num;
-    struct MultipleVariableFabric *next;
-    struct MultipleVariableFabric *pre;
-} mvf;
+    struct linkedListArray *next;
+    struct linkedListArray *pre;
+} LLA;
 
-typedef mvf *mvfPtr;
+typedef LLA *LLAPtr;
 
-struct mvfHook {
+struct LLAHook {
     int count;
-    mvfPtr mvfRear;
-    mvfPtr mvfFront;
-} mvfH[3] = {{0, NULL, NULL}};
+    LLAPtr LLARear;
+    LLAPtr LLAFront;
+} LLAH[3] = {{0, NULL, NULL}};
 
 
 const char Nothing = '0';
@@ -23,9 +23,9 @@ const int True = 1, False = 0;
 
 const int Stack = 0, Queue4pos = 1, Queue4in = 2;
 
-char *getString ( FILE *, size_t );     //get un_limit string
+char *getString ( FILE *, size_t );         //get un_limit string
 
-int isEmpty ( int );                    //linkedList Array Method
+int isEmpty ( int );                        //linkedList Array Method
 int size ( int );
 void push ( char, double, int );
 int pop ( char *, double *, int );
@@ -34,14 +34,14 @@ int peek ( char *, double *, int );
 void print ( int );
 void clean ( int );
 
-int isAllowedOpr ( char );
+int isAllowedOpr ( char );                  //ident is it char that i allowed
 
-int priority ( char );
+int priority ( char );                      //sort opr by priority
 
-double calculate ( char, double, double );
+double calculate ( char, double, double );  //cal the number be inputed with opr
 
-int wordProcess ( char * );
-int inToPostfix ( int, int );
+int wordProcess ( char * );                 //deal with string to linked list type
+int inToPostfix ( int, int );               //deal with infixExpression to postfixExpression
 double eval ( int );
 
 void getAnswer ( char * );
@@ -89,10 +89,10 @@ char *getString ( FILE* fp, size_t size ) {
     str[len++] = '\0';
     return realloc ( str, sizeof ( char ) * len );
 }
-int isEmpty ( int controller ) { return mvfH[controller].count ? 0 : 1;}
-int size ( int controller ) { return mvfH[controller].count; }
+int isEmpty ( int controller ) { return LLAH[controller].count ? 0 : 1;}
+int size ( int controller ) { return LLAH[controller].count; }
 void print ( int controller ) { //debug
-    mvfPtr current = mvfH[controller].mvfFront;
+    LLAPtr current = LLAH[controller].LLAFront;
     if ( isEmpty ( controller ) ) puts ( "List is empty!" );
 	else
 		while ( current != NULL ) {
@@ -103,66 +103,66 @@ void print ( int controller ) { //debug
     puts ( "\nprint end" );
 }
 void push ( char c_in, double d_in, int controller ) {
-    mvfPtr ptr = malloc ( sizeof ( *ptr ) );
+    LLAPtr ptr = malloc ( sizeof ( *ptr ) );
     ptr->num = d_in;
     ptr->opr = c_in;
     
     if ( isEmpty ( controller ) ) {
-        mvfH[controller].mvfFront = ptr; //debug
+        LLAH[controller].LLAFront = ptr; //debug
         ptr->pre = NULL;
     }else {
-        mvfH[controller].mvfRear -> next = ptr; //debug
-        ptr->pre = mvfH[controller].mvfRear;
+        LLAH[controller].LLARear -> next = ptr; //debug
+        ptr->pre = LLAH[controller].LLARear;
     }
-    mvfH[controller].mvfRear = ptr;
+    LLAH[controller].LLARear = ptr;
     ptr -> next = NULL; //debug
-    mvfH[controller].count++;
+    LLAH[controller].count++;
 }
 int pop ( char * c_out, double * d_out, int controller ) {
-    mvfPtr beban = mvfH[controller].mvfRear;
+    LLAPtr beban = LLAH[controller].LLARear;
     if ( isEmpty ( controller ) ) return False;
 
-    mvfH[controller].mvfRear = mvfH[controller].mvfRear->pre;
+    LLAH[controller].LLARear = LLAH[controller].LLARear->pre;
     *d_out = beban->num;
     *c_out = beban->opr;
 
     free ( beban );
-    mvfH[controller].count --;
+    LLAH[controller].count --;
 
-    if ( isEmpty ( controller ) ) mvfH[controller].mvfFront = NULL; //debug
-    else mvfH[controller].mvfRear->next = NULL;
+    if ( isEmpty ( controller ) ) LLAH[controller].LLAFront = NULL; //debug
+    else LLAH[controller].LLARear->next = NULL;
     return True;
 }
 int peek ( char * c_out, double * d_out, int controller ) {
     if ( isEmpty ( controller ) ) return False;
-    *d_out = mvfH[controller].mvfRear->num;
-    *c_out = mvfH[controller].mvfRear->opr;
+    *d_out = LLAH[controller].LLARear->num;
+    *c_out = LLAH[controller].LLARear->opr;
     return True;
 }
 int shift ( char * c_out, double * d_out, int controller ) {
-    mvfPtr beban = mvfH[controller].mvfFront;
+    LLAPtr beban = LLAH[controller].LLAFront;
     if ( isEmpty ( controller ) ) return False;
 
-    mvfH[controller].mvfFront = mvfH[controller].mvfFront->next;
+    LLAH[controller].LLAFront = LLAH[controller].LLAFront->next;
     *d_out = beban->num;
     *c_out = beban->opr;
 
     free ( beban );
-    mvfH[controller].count --;
+    LLAH[controller].count --;
 
-    if ( isEmpty ( controller ) ) mvfH[controller].mvfRear = NULL; //debug
-    else mvfH[controller].mvfFront->pre = NULL;
+    if ( isEmpty ( controller ) ) LLAH[controller].LLARear = NULL; //debug
+    else LLAH[controller].LLAFront->pre = NULL;
     return True;
 }
 void clean ( int controller ) {
-    mvfPtr beban = mvfH[controller].mvfRear;
+    LLAPtr beban = LLAH[controller].LLARear;
     while ( beban ) {
-        mvfH[controller].mvfRear = mvfH[controller].mvfRear->pre;
+        LLAH[controller].LLARear = LLAH[controller].LLARear->pre;
         free ( beban );
-        beban = mvfH[controller].mvfRear;
+        beban = LLAH[controller].LLARear;
     }
-    mvfH[controller].count = 0;
-    mvfH[controller].mvfRear = NULL;
+    LLAH[controller].count = 0;
+    LLAH[controller].LLARear = NULL;
 }
 int wordProcess ( char * infix ) {
     size_t tok = 0, isHead = True;
