@@ -113,7 +113,6 @@ void print(int controller) {
     puts("\nprint end");
 }
 void push(char c_in, double d_in, int controller) {  // 113
-    int a      = 0;
     LLAPtr ptr = malloc(sizeof(*ptr));
     ptr->num   = d_in;
     ptr->opr   = c_in;

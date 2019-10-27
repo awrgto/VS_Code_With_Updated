@@ -13,13 +13,13 @@ int main(){
     scanf("%d", &turn);
     fflush(stdin);
     while( 1){
-        printf("%s", turn % 2 ? "\nplease enter the position --> " : "computer's position --> ");
-        if(turn % 2){ 
+        printf("%s", /*turn % 2*/1 ? "\nplease enter the position --> " : "computer's position --> ");
+        /*if(turn % 2){ 
             scanf("%d%d", &x, &y);
             fflush(stdin);
             if( x > 3 || x < 0 || y > 3 || y < 0 || table[x][y] != EMPTY) continue;    
-        }else computer_turn(table, &x, &y);
-        table[x][y] = (turn % 2) ? 'O' : 'X';
+        }else */computer_turn(table, &x, &y);
+        table[x][y] = /*(turn % 2)*/1 ? 'O' : 'X';
 		for (int i = 0; i < 3;i ++) printf(" %c | %c | %c \n%s", table[i][0], table[i][1], table[i][2], i != 2 ? "-----------\n" : "");
         if (winner(table) != NO_RESULT) {
             printf("winner is %s !",winner(table) == O ? "player" : winner(table) == TIE ? "both" : "computer");
