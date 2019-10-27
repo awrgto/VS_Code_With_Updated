@@ -39,22 +39,28 @@ int main(void) {
         poiMap[o_iter].resize(poi.size( ));
         poi_index[o_iter] = o_iter;
         for (size_t i_iter = 0; i_iter < poi.size( ); i_iter++) { poiMap[o_iter][i_iter] = distance(poi[o_iter], poi[i_iter]); }
-    }
+    }/*
+    for (int i = 0; i < poi.size( ); i++) {
+        for (int j = 0; j < poi.size( ); j++) std::cout << fixed << setprecision(3) << poiMap[i][j] << "\t";
+        std::cout << std::endl;
+    }*/
     poi_permutation(0, poi.size( ) - 1);
-    std::cout << fixed << setprecision(3) << "minDistance of tsp is " << minDistance << " km";
+
+    std::cout << "minDistance of tsp is " << minDistance << " km";
 }
 void poi_permutation(int a, int b) {
     if (a == b) {
+        tmpDistance = 0;
         for (std::vector< int >::iterator iter = poi_index.begin( ); iter != poi_index.end( ) - 1; iter++) {
             //cout << *iter;
-            tmpDistance += poiMap[*iter][*iter + 1];
+            tmpDistance += poiMap[*iter][*(iter + 1)];
         }
         //cout << *(poi_index.end( ) - 1) << endl;
-        tmpDistance += poiMap[*poi_index.begin( )][*(poi_index.end( ) - 1)];
+        tmpDistance += poiMap[poi_index.front( )][(poi_index.back( ))];
         if (tmpDistance < minDistance) minDistance = tmpDistance;
     }
-    else{
-        for (int j = a; j < poi.size(); j++) {
+    else {
+        for (int j = a; j < poi.size( ); j++) {
             std::swap(poi_index[a], poi_index[j]);
             poi_permutation(a + 1, b);
             std::swap(poi_index[a], poi_index[j]);
