@@ -99,7 +99,6 @@ VP index_to_VP(VI data_index, VP data) {
 double Length_of_group(VP data) {
     VLP CH = to_convex_hull(data);
     VP cp;
-    std::cout << std::endl;
     for (auto o_iter = data.begin( ); o_iter != data.end( ); o_iter++) {
         int temp = 1;
         for (auto i_iter = CH.begin( ); i_iter != CH.end( ) && temp; i_iter++)
@@ -134,8 +133,7 @@ double Length_of_group(VP data) {
                 lastPtr = iter;
                 continue;
             }
-            minDistance += v_distance(lastPtr, iter);
-            std::cout << "\t\tmaxDistance of tsp is " << v_distance(lastPtr, iter) << " m\n";
+            minDistance += v_distance(lastPtr, iter);            //std::cout << "\t\tmaxDistance of tsp is " << v_distance(lastPtr, iter) << " m\n";
             lastPtr = iter;
         }  //std::cout << "\tsG... " << minDistance << " m\n";
     return minDistance;
@@ -145,8 +143,8 @@ VLP to_convex_hull(VP data) {
 
     std::sort(data.begin( ), data.end( ), [](const Point a, const Point b) -> bool { return (a.x < b.x) || (a.x == b.x && a.y < b.y); });
 
-    for (auto iter : data) std::cout << fixed << setprecision(4) << iter.x << ' ' << iter.y << std::endl;
-    std::cout << std::endl;
+    /*for (auto iter : data) std::cout << fixed << setprecision(4) << iter.x << ' ' << iter.y << std::endl;
+    std::cout << std::endl;*/
     for (auto element : data) {  // l Convex Hull
         while (CH.size( ) >= 2 && cross(((CH.end( ) - 2)->front( )), CH.back( ).front( ), element) <= 0) CH.pop_back( );
         CH.push_back(std::list< Point >( ));
