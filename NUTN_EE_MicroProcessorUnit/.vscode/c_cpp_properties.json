@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:\\Users\\USER\\Documents\\ArduinoData\\packages\\esp8266\\tools\\**",
+                "C:\\Users\\USER\\Documents\\ArduinoData\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\**",
+                "C:\\Program Files\\WindowsApps\\ArduinoLLC.ArduinoIDE_1.8.21.0_x86__mdqgnx93n4wtt\\tools\\**",
+                "C:\\Program Files\\WindowsApps\\ArduinoLLC.ArduinoIDE_1.8.21.0_x86__mdqgnx93n4wtt\\hardware\\arduino\\avr\\**",
+                "C:\\Program Files\\WindowsApps\\ArduinoLLC.ArduinoIDE_1.8.21.0_x86__mdqgnx93n4wtt\\hardware\\tools\\avr\\avr\\include\\**",
+                "C:\\Program Files\\WindowsApps\\ArduinoLLC.ArduinoIDE_1.8.21.0_x86__mdqgnx93n4wtt\\libraries\\**"
+            ],
+            "forcedInclude": [
+                "C:\\Program Files\\WindowsApps\\ArduinoLLC.ArduinoIDE_1.8.21.0_x86__mdqgnx93n4wtt\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"
+            ],
+            "intelliSenseMode": "clang-x64",
+            "compilerPath": "C:\\LLVM\\bin\\gcc.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

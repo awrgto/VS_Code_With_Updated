@@ -1,3 +1,6 @@
+//已捨棄
+
+
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -7,7 +10,8 @@
 
 using namespace std;
 
-const float initLongitude = 120.1, initLatitude = 22.9, degree2radius = 3.14159265358979f / 180.0f;
+const float initLongitude = 120.14, initLatitude = 22.98, degree2radius = 3.14159265358979f / 180.0f;
+const int p = 20;
 
 typedef struct point {
     float x, y;
@@ -21,12 +25,15 @@ float distance(Point a, Point b) { return sqrt(pow((a.x - b.x), 2.0) + pow((a.y 
 int main(void) {
     std::ifstream inputFile("input");
     if (!inputFile.is_open( )) return -99;
-    while (inputFile.good( )) {
+    int pr = p;
+    while (inputFile.good( ) && pr--) {
         float x, y;
         inputFile >> y >> x;
         poi.push_back(
             {degree2radius * (x - initLongitude) * (cos(degree2radius * (x + initLongitude) / 2)) * 6371, degree2radius * (y - initLatitude) * 6371});
     }
+    /*for (std::vector< Point >::iterator iter = poi.begin( ); iter != poi.end( ); iter++) std::cout << iter->x << "," << iter->y << std::endl;
+    std::cout << std::endl;*/
     inputFile.close( );
     ch.push_back(poi.front( ));
     for (std::vector< Point >::iterator iter = poi.begin( ); iter != poi.end( ); iter++) {
@@ -49,12 +56,11 @@ int main(void) {
         lastCh = ch.back( );
         ch.push_back(tempCh);
     }
-    /*debugger
-    for (std::vector< Point >::iterator iter = ch.begin( ); iter != ch.end( ); iter++) std::cout << iter->x << "," << iter->y << std::endl;
+    /*for (std::vector< Point >::iterator iter = ch.begin( ); iter != ch.end( ); iter++) std::cout << iter->x << "," << iter->y << std::endl;
     std::cout << std::endl;*/
     float area = 0.0;
     for (std::vector< Point >::iterator iter = ch.begin( ); iter != ch.end( ) - 1; iter++) area += cross({0.0, 0.0}, *iter, *(iter + 1));
 
-    std::cout << fixed << setprecision(3) << "area of tsp is " << std::fabs(area) / 2.0 << " km^2" << std::endl;
-    std::cout << fixed << setprecision(3) << "maxDistance of tsp is " << maxDistance << " km";
+    std::cout << fixed << setprecision(3) << "(assume earth is a ball)area of CH is " << std::fabs(area) / 2.0 << " km^2" << std::endl;
+    std::cout << fixed << setprecision(3) << "(assume earth is a ball)maxDistance of CH is " << maxDistance << " km";
 }

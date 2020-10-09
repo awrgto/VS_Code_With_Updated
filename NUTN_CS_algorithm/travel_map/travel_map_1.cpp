@@ -5,7 +5,7 @@
 #include <limits>
 #include <vector>
 
-#define p 30
+#define p 2
 
 using namespace std;
 
